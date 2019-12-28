@@ -3,8 +3,7 @@ const express =    		require('express'),
 	  app =    			express(),
 	  bodyParser =   	 require('body-parser'),
 	  sanitizer=        require('express-sanitizer'),
-	  mongoose =    	require('mongoose'),
-	  error='';
+	  mongoose =    	require('mongoose');
 
 mongoose.connect('mongodb://localhost:27017/blog_app',{useUnifiedTopology:true, useNewUrlParser: true})
 app.set('view engine','ejs');
@@ -29,8 +28,7 @@ app.get('/',async(req,res)=>{
 app.get('/blogs',async(req,res)=>{
 	Blog.find({},(err,blogs)=>{	
 		if(err){
-			error=err;
-			res.render('error',{error:error})
+			res.render('error',{error:err})
 		}else{
 			res.render('index',{blogs:blogs});
 		}
@@ -45,19 +43,17 @@ app.post('/blogs',async(req,res)=>{
 	req.body.blog.body=req.sanitize(req.body.blog.body);
 	Blog.create(req.body.blog,(err,newBlog)=>{
 		if(err){
-			error=err;
-			res.render('error',{error:error})
+			res.render('error',{error:err})
 		}else{
 			  res.redirect('/blogs');
 		}
-		})
+		});
 	});
 // Show more route
 app.get('/blogs/:id',async(req,res)=>{
 		Blog.findById(req.params.id, (err,foundBlog)=>{
 			if(err){
-				error=err;
-				res.render('error',{error:error})
+				res.render('error',{error:err})
 			}else{
 				res.render('show',{blog:foundBlog})
 			}
@@ -67,8 +63,7 @@ app.get('/blogs/:id',async(req,res)=>{
 app.get('/blogs/:id/edit', async(req,res)=>{
 	Blog.findById(req.params.id,(err,foundBlog)=>{
 		if(err){
-			error=err;
-			res.render('error',{error:error})
+			res.render('error',{error:err})
 		}else{
 			res.render('edit',{blog:foundBlog})
 		}
@@ -79,8 +74,7 @@ app.put('/blogs/:id',async(req,res)=>{
 	req.body.blog.body=req.sanitize(req.body.blog.body);
 	Blog.findByIdAndUpdate(req.params.id,req.body.blog,(err,updated)=>{
 		if(err){
-			error=err;
-			res.render('error',{error:error})
+			res.render('error',{error:err})
 		}else{
 			res.redirect('/blogs');
 		}
@@ -91,8 +85,7 @@ app.delete('/blogs/:id',async(req,res)=>{
 	console.log(req.params.id)
 	Blog.deleteOne({_id:req.params.id},(err,deleted)=>{
 		if(err){
-			error=err;
-			res.render('error',{error:error})
+			res.render('error',{error:err})
 		}else{
 		res.redirect('/blogs');
 		}
